@@ -1,0 +1,31 @@
+# Gradle
+.gradle
+
+# Eclipse
+.settings
+.classpath
+.project
+bin
+*.launch
+
+# Visual Studio Code
+.vscode
+
+# Libs
+libs
+
+# Build
+build
+run
+
+# Minecraft
+config
+crash-reports
+logs
+mods
+local
+resourcepacks
+saves
+usercache.json
+usernamecache.json
+options.txt

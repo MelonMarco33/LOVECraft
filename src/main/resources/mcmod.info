@@ -1,0 +1,16 @@
+[
+{
+  "modid": "lovecraft",
+  "name": "LOVECraft",
+  "description": "Add LOVE(Level of ViolencE) and EXP(EXecution Point) from Undertale to Minecraft.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["su226"],
+  "credits": "Forge, MCP and Minecraft",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

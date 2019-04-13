@@ -1,0 +1,14 @@
+{
+    "kill": {
+        "sounds": [
+            "lovecraft:kill"
+        ],
+        "subtitle": "lovecraft.airRod"
+    },
+    "upgrade": {
+        "sounds": [
+            "lovecraft:upgrade"
+        ],
+        "subtitle": "lovecraft.upgrade"
+    }
+}
