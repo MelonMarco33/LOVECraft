@@ -4,13 +4,13 @@ buildscript {
         maven { url = "http://files.minecraftforge.net/maven" }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath "net.minecraftforge.gradle:ForgeGradle:${forgegradle_version}"
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "1.0"
-group = "su226.lovecraft.LOVECraft" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+version = "${lovecraft_version}"
+group = "su226.lovecraft.LOVECraft"
 archivesBaseName = "lovecraft"
 
 sourceCompatibility = targetCompatibility = '1.8'
@@ -19,22 +19,21 @@ compileJava {
 }
 
 minecraft {
-    version = "1.12.2-14.23.5.2825"
+    version = "${minecraft_version}-${forge_version}"
     runDir = "run"
-    mappings = "snapshot_20171003"
+    mappings = "${mappings_version}"
 }
 
 dependencies {
 }
 
 processResources {
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+    inputs.property "lovecraft_version", project.version
+    inputs.property "minecraft_version", project.minecraft.version
 
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'lovecraft_version':project.version, 'minecraft_version':project.minecraft.version
     }
         
     from(sourceSets.main.resources.srcDirs) {
