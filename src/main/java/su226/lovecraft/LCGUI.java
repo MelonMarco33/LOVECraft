@@ -4,10 +4,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class LCGUI extends Gui {
   private static final ResourceLocation TEXTURE = new ResourceLocation(LOVECraft.MODID, "textures/gui/exp_bar.png");
-  private static final Minecraft mc = Minecraft.getMinecraft();
+  private final Minecraft mc;
+
+  public LCGUI(Minecraft mc) {
+    this.mc = mc;
+  }
 
   public void render() {
     this.render(0);

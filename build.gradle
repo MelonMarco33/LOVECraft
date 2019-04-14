@@ -35,8 +35,9 @@ processResources {
         include 'mcmod.info'
         expand 'lovecraft_version':project.version, 'minecraft_version':project.minecraft.version
     }
-        
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+    
+    from(sourceSets.main.java.srcDirs) {
+        include 'su226/lovecraft/LOVECraft.java'
+        expand 'lovecraft_version':project.version
     }
 }
