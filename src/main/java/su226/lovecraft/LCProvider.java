@@ -1,6 +1,7 @@
 package su226.lovecraft;
 
-import net.minecraft.nbt.NBTBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -8,11 +9,17 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.items.CapabilityItemHandler;
 
-@SuppressWarnings("rawtypes")
-public class LCProvider implements ICapabilityProvider, LCLOVE, ICapabilitySerializable {
-  private int exp;
-  private int totalexp;
-  private int love;
+public class LCProvider implements ICapabilityProvider, ICapabilitySerializable<NBTTagCompound>, LCLOVE {
+  private int EXP;
+  private int maxEXP;
+  private int totalEXP;
+  private int LOVE;
+  private int prevLOVE;
+  private EntityPlayer player;
+
+  public LCProvider(EntityPlayer player) {
+    this.player = player;
+  }
 
   @Override
   public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
@@ -23,7 +30,7 @@ public class LCProvider implements ICapabilityProvider, LCLOVE, ICapabilitySeria
   }
 
   @Override
-  @SuppressWarnings("all")
+  @SuppressWarnings("unchecked")
   public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
     if (capability == LCCapability.LOVE) {
       return (T)this;
@@ -33,33 +40,51 @@ public class LCProvider implements ICapabilityProvider, LCLOVE, ICapabilitySeria
 
   @Override
   public int getEXP() {
-    return exp;
+    return EXP;
   }
 
   @Override
   public int getTotalEXP() {
-    return totalexp;
+    return totalEXP;
   }
 
   @Override
   public int getLOVE() {
-    return love;
+    return LOVE;
   }
 
   @Override
   public void setEXP(int value) {
-    totalexp -= exp;
-    exp = value;
-    totalexp += exp;
-    int maxexp = getMaxEXP(love);
-    while (exp >= maxexp) {
-      exp -= maxexp;
-      love++;
-      maxexp = getMaxEXP(love);
+    totalEXP -= EXP;
+    EXP = value;
+    totalEXP += EXP;
+    int maxexp = getMaxEXP(LOVE);
+    while (EXP >= maxexp) {
+      EXP -= maxexp;
+      LOVE++;
+      maxexp = getMaxEXP(LOVE);
     }
+    sync();
   }
 
-  private int getMaxEXP(int love2) {
+  @Override
+  public int getMaxEXP() {
+    if (prevLOVE != LOVE) {
+      prevLOVE = LOVE;
+      maxEXP = getMaxEXP(LOVE);
+    }
+    return maxEXP;
+  }
+
+  private int getMinTotalEXP() {
+    int ret = 0;
+    for (int i = 0; i < LOVE; i++) {
+      ret += getMaxEXP(i);
+    }
+    return ret;
+  }
+
+  public int getMaxEXP(int love2) {
     if (LCConfig.MaxEXPTable.length > love2 + 1) {
       return LCConfig.MaxEXPTable[love2];
     }
@@ -70,46 +95,55 @@ public class LCProvider implements ICapabilityProvider, LCLOVE, ICapabilitySeria
 
   @Override
   public void setTotalEXP(int value) {
-    love = 0;
-    totalexp = value;
-    exp = value;
-    int maxexp = getMaxEXP(love);
-    while (exp >= maxexp) {
-      exp -= maxexp;
-      love++;
-      maxexp = getMaxEXP(love);
+    LOVE = 0;
+    totalEXP = value;
+    EXP = value;
+    int maxexp = getMaxEXP();
+    while (EXP >= maxexp) {
+      EXP -= maxexp;
+      LOVE++;
+      maxexp = getMaxEXP();
     }
+    sync();
   }
 
   @Override
   public void setLOVE(int value) {
-    love = value;
-    exp = 0;
-    totalexp = getMaxEXP(love - 1) + 1;
+    LOVE = value;
+    EXP = 0;
+    totalEXP = getMinTotalEXP();
+    sync();
   }
 
   @Override
   public void addEXP(int value) {
-    exp += value;
-    totalexp += value;
-    int maxexp = getMaxEXP(love);
-    while (exp >= maxexp) {
-      exp -= maxexp;
-      love++;
-      maxexp = getMaxEXP(love);
+    EXP += value;
+    totalEXP += value;
+    int maxexp = getMaxEXP();
+    while (EXP >= maxexp) {
+      EXP -= maxexp;
+      LOVE++;
+      maxexp = getMaxEXP();
+    }
+    sync();
+  }
+
+  @Override
+  public void sync() {
+    if (!player.getEntityWorld().isRemote) {
+      LCNetwork.INSTANCE.sendTo(new LCMessage(totalEXP), (EntityPlayerMP)player);
     }
   }
 
   @Override
-  public void deserializeNBT(NBTBase tag) {
-    NBTTagCompound compound = (NBTTagCompound)tag;
-    setTotalEXP(compound.getInteger("exp"));
+  public void deserializeNBT(NBTTagCompound tag) {
+    setTotalEXP(tag.getInteger("exp"));
   }
 
   @Override
-  public NBTBase serializeNBT() {
-    NBTTagCompound compound = new NBTTagCompound();
-    compound.setInteger("exp", getTotalEXP());
-    return compound;
+  public NBTTagCompound serializeNBT() {
+    NBTTagCompound tag = new NBTTagCompound();
+    tag.setInteger("exp", getTotalEXP());
+    return tag;
   }
 }

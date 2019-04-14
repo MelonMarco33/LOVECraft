@@ -39,6 +39,9 @@ public class LCEval {
         tmp += chr;
       }
     }
+    if (layer != 0) {
+      return 0; //括号不匹配
+    }
     part.add(tmp.trim());
     for (int i = 0; i < part.size(); i++) {
       String j = part.get(i);

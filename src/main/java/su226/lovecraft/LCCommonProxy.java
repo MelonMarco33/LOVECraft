@@ -12,11 +12,12 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent.Register;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
 @EventBusSubscriber
-public class LCEvent {
+public class LCCommonProxy {
   @SubscribeEvent
   public static void livingHurt(LivingHurtEvent event) {
     if (isVaildAttack(event)) {
@@ -80,13 +81,20 @@ public class LCEvent {
 
   @SubscribeEvent
   public static void attachCapability(AttachCapabilitiesEvent<Entity> event) {
-    if (event.getObject() instanceof EntityPlayer) {
-      event.addCapability(new ResourceLocation("lovecraft", "love"), new LCProvider());
+    Entity entity = event.getObject();
+    if (entity instanceof EntityPlayer) {
+      event.addCapability(new ResourceLocation("lovecraft", "love"), new LCProvider((EntityPlayer)entity));
     }
   }
 
   @SubscribeEvent
   public static void registerSound(Register<SoundEvent> event) {
     LCSound.init(event.getRegistry());
+  }
+
+  public void preInit(FMLPreInitializationEvent event) {
+    LOVECraft.log = event.getModLog();
+    LCNetwork.preInit();
+    LCCapability.preInit();
   }
 }
