@@ -51,14 +51,21 @@ public class LCProvider implements ICapabilityProvider, LCLOVE, ICapabilitySeria
     totalexp -= exp;
     exp = value;
     totalexp += exp;
-    while (exp >= getMaxEXP(love)) {
-      exp -= getMaxEXP(love);
+    int maxexp = getMaxEXP(love);
+    while (exp >= maxexp) {
+      exp -= maxexp;
       love++;
+      maxexp = getMaxEXP(love);
     }
   }
 
   private int getMaxEXP(int love2) {
-    return (int)Math.pow(2, love2);
+    if (LCConfig.MaxEXPTable.length > love2 + 1) {
+      return LCConfig.MaxEXPTable[love2];
+    }
+    LCEval eval = new LCEval();
+    eval.var.put("x", (double)love2);
+    return (int)Math.floor(eval.calc(LCConfig.MaxEXPFormula));
   }
 
   @Override
@@ -66,9 +73,11 @@ public class LCProvider implements ICapabilityProvider, LCLOVE, ICapabilitySeria
     love = 0;
     totalexp = value;
     exp = value;
-    while (exp >= getMaxEXP(love)) {
-      exp -= getMaxEXP(love);
+    int maxexp = getMaxEXP(love);
+    while (exp >= maxexp) {
+      exp -= maxexp;
       love++;
+      maxexp = getMaxEXP(love);
     }
   }
 
@@ -83,9 +92,11 @@ public class LCProvider implements ICapabilityProvider, LCLOVE, ICapabilitySeria
   public void addEXP(int value) {
     exp += value;
     totalexp += value;
-    while (exp >= getMaxEXP(love)) {
-      exp -= getMaxEXP(love);
+    int maxexp = getMaxEXP(love);
+    while (exp >= maxexp) {
+      exp -= maxexp;
       love++;
+      maxexp = getMaxEXP(love);
     }
   }
 
