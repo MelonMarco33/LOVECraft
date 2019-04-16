@@ -5,9 +5,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent.Register;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -15,6 +13,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
+import su226.lovecraft.iwillbepunishedbyhplovecraft.Su226;
 
 @EventBusSubscriber
 public class LCCommonProxy {
@@ -23,18 +22,7 @@ public class LCCommonProxy {
     if (isVaildAttack(event)) {
       EntityPlayer player = (EntityPlayer)event.getSource().getTrueSource();
       LCLOVE love = player.getCapability(LCCapability.LOVE, null);
-      int current = love.getLOVE();
-      love.addEXP(calcExp(event));
-      if (LCConfig.playSound) {
-        if (love.getLOVE() > current) {
-          player.getEntityWorld().playSound(null, player.getPosition(), LCSound.UPGRADE, SoundCategory.PLAYERS, 1F, 1F);
-        } else {
-          player.getEntityWorld().playSound(null, player.getPosition(), LCSound.KILL, SoundCategory.PLAYERS, 1F, 1F);
-        }
-      }
-      if (LCConfig.showMessage) {
-        player.sendMessage(new TextComponentTranslation("lovecraft.increased", love.getLOVE(), love.getTotalEXP(), love.getEXP()));
-      }
+      love.addEXP(calcExp(event), false);
     }
   }
 
@@ -96,5 +84,6 @@ public class LCCommonProxy {
     LOVECraft.log = event.getModLog();
     LCNetwork.preInit();
     LCCapability.preInit();
+    Su226.saySomething();
   }
 }

@@ -13,7 +13,7 @@ public class LCClientProxy extends LCCommonProxy {
 
   @SubscribeEvent
   public static void onDrawScreenPre(RenderGameOverlayEvent.Post event) {
-    if (event.getType() == ElementType.EXPERIENCE) {
+    if (LCConfig.showBar && event.getType() == ElementType.EXPERIENCE) {
       gui.render();
     }
   }

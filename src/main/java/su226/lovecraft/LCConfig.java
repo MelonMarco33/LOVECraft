@@ -16,10 +16,11 @@ public class LCConfig {
   public static String[] EntitiesWhitelist = new String[0];
   @Config.Comment("The EXP of entities, the EXP of any entity that is not on the list will be calculated with the formula, format RegisterName:EXP, example minecraft:pig:10.")
   public static String[] EntitiesEXP = new String[0];
-  @Config.Comment("Will the EXP bar be shown? Client side only.")
+  @Config.Comment("Will the EXP bar be shown? Client only.")
   public static boolean showBar = true;
-  @Config.Comment("Will the EXP message be sent to players?")
-  public static boolean showMessage = true;
-  @Config.Comment("Will the EXP sound be played?")
+  @Config.Comment("EXP message type. 0: Disabled, 1: Status message, 2: Chat message. Client only.")
+  @Config.RangeInt(min = 0, max = 2)
+  public static int messageType = 1;
+  @Config.Comment("Will the EXP sound be played? Client only.")
   public static boolean playSound = true;
 }

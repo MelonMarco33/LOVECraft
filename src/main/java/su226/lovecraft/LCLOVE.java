@@ -5,9 +5,9 @@ public interface LCLOVE {
   public int getMaxEXP();
   public int getTotalEXP();
   public int getLOVE();
-  public void setEXP(int value);
-  public void addEXP(int value);
-  public void setTotalEXP(int value);
-  public void setLOVE(int value);
-  public void sync();
+  public void setEXP(int value, boolean silent);
+  public void addEXP(int value, boolean silent);
+  public void setTotalEXP(int value, boolean silent);
+  public void setLOVE(int value, boolean silent);
+  public void update(boolean silent);
 }
