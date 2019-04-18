@@ -37,6 +37,7 @@ public class LCCommonProxy {
     }
     LCEval eval = new LCEval();
     eval.var.put("x", (double)living.getMaxHealth());
+    eval.var.put("y", (double)Math.min(event.getAmount(), living.getHealth()));
     return (int)Math.ceil(eval.calc(LCConfig.EXPFormula));
   }
 
@@ -46,7 +47,7 @@ public class LCCommonProxy {
       return false;
     }
     EntityLivingBase living = event.getEntityLiving();
-    if (event.getAmount() < living.getHealth()) {
+    if (event.getAmount() < living.getHealth() || !LCConfig.onlyWhenDeath) {
       return false;
     }
     String id = EntityRegistry.getEntry(living.getClass()).getRegistryName().toString();
@@ -84,6 +85,6 @@ public class LCCommonProxy {
     LOVECraft.log = event.getModLog();
     LCNetwork.preInit();
     LCCapability.preInit();
-    Su226.saySomething();
+    Su226.INSTANCE.saySomething();
   }
 }

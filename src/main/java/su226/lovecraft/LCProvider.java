@@ -4,14 +4,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.items.CapabilityItemHandler;
 
-public class LCProvider implements ICapabilityProvider, ICapabilitySerializable<NBTTagCompound>, LCLOVE {
+public class LCProvider implements ICapabilitySerializable<NBTTagCompound>, ITickable, LCLOVE {
   private int EXP;
   private int maxEXP;
   private int totalEXP;
@@ -82,7 +82,7 @@ public class LCProvider implements ICapabilityProvider, ICapabilitySerializable<
     LOVE = 0;
     totalEXP = value;
     EXP = value;
-    update(silent);
+    updateEXP(silent);
   }
 
   @Override
@@ -90,7 +90,7 @@ public class LCProvider implements ICapabilityProvider, ICapabilitySerializable<
     totalEXP -= EXP;
     EXP = value;
     totalEXP += value;
-    update(silent);
+    updateEXP(silent);
   }
 
   @Override
@@ -98,18 +98,18 @@ public class LCProvider implements ICapabilityProvider, ICapabilitySerializable<
     LOVE = value;
     EXP = 0;
     totalEXP = getMinTotalEXP();
-    update(silent);
+    updateEXP(silent);
   }
 
   @Override
   public void addEXP(int value, boolean silent) {
     EXP += value;
     totalEXP += value;
-    update(silent);
+    updateEXP(silent);
   }
 
   @Override
-  public void update(boolean silent) {
+  public void updateEXP(boolean silent) {
     maxEXP = getMaxEXP(LOVE);
     while (EXP >= maxEXP) {
       EXP -= maxEXP;
@@ -121,12 +121,10 @@ public class LCProvider implements ICapabilityProvider, ICapabilitySerializable<
     if (!player.getEntityWorld().isRemote) {
       LCNetwork.INSTANCE.sendTo(new LCMessage(totalEXP, silent), (EntityPlayerMP)player);
     } else if (!silent) {
-      if (LCConfig.playSound) {
-        if (upgraded) {
-          player.getEntityWorld().playSound(player, player.getPosition(), LCSound.UPGRADE, SoundCategory.PLAYERS, 1F, 1F);
-        } else {
-          player.getEntityWorld().playSound(player, player.getPosition(), LCSound.KILL, SoundCategory.PLAYERS, 1F, 1F);
-        }
+      if (upgraded && LCConfig.playSound == 2) {
+        player.getEntityWorld().playSound(player, player.getPosition(), LCSound.UPGRADE, SoundCategory.PLAYERS, 1F, 1F);
+      } else if (LCConfig.playSound >= 1) {
+        player.getEntityWorld().playSound(player, player.getPosition(), LCSound.KILL, SoundCategory.PLAYERS, 1F, 1F);
       }
       if (LCConfig.messageType == 1) {
         player.sendStatusMessage(new TextComponentTranslation("lovecraft.increased", LOVE, totalEXP, EXP), true);
@@ -146,5 +144,10 @@ public class LCProvider implements ICapabilityProvider, ICapabilitySerializable<
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger("exp", getTotalEXP());
     return tag;
+  }
+
+  @Override
+  public void update() {
+    System.err.println(1);
   }
 }

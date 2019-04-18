@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 public class LOVECraft {
   public static final String MODID = "lovecraft";
   public static final String NAME = "LOVECraft";
-  public static final String VERSION = "2.2";
+  public static final String VERSION = "${lovecraft_version}";
 
   @SidedProxy(clientSide = "su226.lovecraft.LCClientProxy", serverSide = "su226.lovecraft.LCCommonProxy")
   public static LCCommonProxy proxy;

@@ -11,20 +11,18 @@ import su226.lovecraft.LOVECraft;
  * <p><del>Horse Power</del></p>
  * <p><del>High Performance</del></p>
  * <p><del>High Pressure. YES WE ARE GREGTECH PLAYERS AND WE FEAR NOTHING!!!</del></p>
- * <p>SO TELL ME WHY I SHOULD WRITE JAVADOC FOR THIS CLASS?</p>
- * @see su226.lovecraft.iwillbepunishedbyhplovecraft.Nyaruko
- * @author su226
  * @since 2.2
+ * @author su226
+ * @see su226.lovecraft.iwillbepunishedbyhplovecraft.ICharacter
+ * @see su226.lovecraft.iwillbepunishedbyhplovecraft.Nyaruko
  */
-public class Su226 {
-  /**
-   * Something to say :D.
-   */
-  private static String[] sentences = new String[] {
+public final class Su226 implements ICharacter {
+  public static final Su226 INSTANCE = new Su226();
+  private String[] sentences = new String[] {
     "It's a beautiful day outside, brids are singing, flowers are blooming, on days like that, kids like you, SHOULD FIX THE BUGS IN THE HELL!",
     "I love Nyarlathotep... Wait a minute what did I say?",
     "What's up everybody welcome to my modding studio where safety is number one priority.",
-    "My name is su226, I'm a modder, I'm a performace modder, I'm hired for people for fulfil their fantasies, theri DEEP♂DARK♂FANTASIES.",
+    "My name is su226, I'm a modder, I'm a performace modder, I'm hired for people for fulfil their fantasies, their DEEP♂DARK♂FANTASIES.",
     "VSCode is the best editor... Hold on vim, emacs, sublime text and atom users I have to explain.",
     "I am honored that I'm from the great Gregtech Intergalactical",
     "Get the f**k out of my room I'm playing Minecraft!",
@@ -33,21 +31,17 @@ public class Su226 {
     "Let me have a cup of Java and calm down.",
     "I have a C++, I have some hair, oh! No hair left!"};
 
-  /**
-   * <blockquote>
-   * <p>This does what you think it does.</p>
-   * <p>--GCC C++ headers</p>
-   * </blockquote>
-   */
-  public static final void saySomething() {
+  private Su226() {
+  }
+
+  @Override
+  public void saySomething() {
     String chosenSentense = sentences[(int)(Math.random() * sentences.length)];
     LOVECraft.log.info(chosenSentense);
   }
 
-  /**
-   * Get the "couple" class of this class
-   */
-  public static final String getCouple() {
-    return Nyaruko.class.getSimpleName();
+  @Override
+  public Nyaruko getCouple() {
+    return Nyaruko.INSTANCE;
   }
 }

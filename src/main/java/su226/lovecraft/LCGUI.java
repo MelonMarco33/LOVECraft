@@ -10,11 +10,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class LCGUI extends Gui {
   private static final ResourceLocation TEXTURE = new ResourceLocation(LOVECraft.MODID, "textures/gui/exp_bar.png");
-  private final Minecraft mc;
-
-  public LCGUI(Minecraft mc) {
-    this.mc = mc;
-  }
+  private final Minecraft mc = Minecraft.getMinecraft();
 
   public void render() {
     this.render(0);

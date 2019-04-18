@@ -22,6 +22,7 @@ minecraft {
     version = "${minecraft_version}-${forge_version}"
     runDir = "run"
     mappings = "${mappings_version}"
+    replace '${lovecraft_version}', project.version
 }
 
 dependencies {
@@ -34,10 +35,5 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
         expand 'lovecraft_version':project.version, 'minecraft_version':project.minecraft.version
-    }
-    
-    from(sourceSets.main.java.srcDirs) {
-        include 'su226/lovecraft/LOVECraft.java'
-        expand 'lovecraft_version':project.version
     }
 }
