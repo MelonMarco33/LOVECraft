@@ -1,1 +1,2 @@
-lovecraft.increased=你的EXP增加了（LOVE %d，总EXP %d，EXP %d）
+lovecraft.love_increased=你的LOVE增加了
+lovecraft.exp_increased=你获得了%d点EXP (LOVE %d, 总EXP %d，EXP %d)

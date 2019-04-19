@@ -6,8 +6,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent.Register;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -79,6 +81,15 @@ public class LCCommonProxy {
   @SubscribeEvent
   public static void registerSound(Register<SoundEvent> event) {
     LCSound.init(event.getRegistry());
+  }
+
+  @SubscribeEvent
+  public static void playerJoin(EntityJoinWorldEvent event) {
+    Entity entity = event.getEntity();
+    World world = event.getWorld();
+    if (entity instanceof EntityPlayer && !world.isRemote) {
+      entity.getCapability(LCCapability.LOVE, null).sendToClient(true);
+    }
   }
 
   public void preInit(FMLPreInitializationEvent event) {

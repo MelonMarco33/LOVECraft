@@ -1,5 +1,6 @@
 package su226.lovecraft;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,6 +18,7 @@ public class LCProvider implements ICapabilitySerializable<NBTTagCompound>, ITic
   private int totalEXP;
   private int LOVE;
   private int prevLOVE;
+  private int prevEXP;
   private EntityPlayer player;
 
   public LCProvider(EntityPlayer player) {
@@ -82,7 +84,7 @@ public class LCProvider implements ICapabilitySerializable<NBTTagCompound>, ITic
     LOVE = 0;
     totalEXP = value;
     EXP = value;
-    updateEXP(silent);
+    updateAll(silent);
   }
 
   @Override
@@ -90,7 +92,7 @@ public class LCProvider implements ICapabilitySerializable<NBTTagCompound>, ITic
     totalEXP -= EXP;
     EXP = value;
     totalEXP += value;
-    updateEXP(silent);
+    updateAll(silent);
   }
 
   @Override
@@ -98,38 +100,76 @@ public class LCProvider implements ICapabilitySerializable<NBTTagCompound>, ITic
     LOVE = value;
     EXP = 0;
     totalEXP = getMinTotalEXP();
-    updateEXP(silent);
+    updateAll(silent);
   }
 
   @Override
   public void addEXP(int value, boolean silent) {
     EXP += value;
     totalEXP += value;
-    updateEXP(silent);
+    updateAll(silent);
   }
 
   @Override
-  public void updateEXP(boolean silent) {
+  public LCLOVEInfo updateEXP() {
     maxEXP = getMaxEXP(LOVE);
     while (EXP >= maxEXP) {
       EXP -= maxEXP;
       LOVE++;
       maxEXP = getMaxEXP(LOVE);
     }
+    int increment = totalEXP - prevEXP;
     boolean upgraded = prevLOVE < LOVE;
     prevLOVE = LOVE;
+    prevEXP = totalEXP;
+    return new LCLOVEInfo(increment, upgraded);
+  }
+
+  @Override
+  public void updateAll(boolean silent) {
+    LCLOVEInfo info = updateEXP();
     if (!player.getEntityWorld().isRemote) {
-      LCNetwork.INSTANCE.sendTo(new LCMessage(totalEXP, silent), (EntityPlayerMP)player);
+      sendToClient(silent);
     } else if (!silent) {
-      if (upgraded && LCConfig.playSound == 2) {
+      sendMessage(info);
+    }
+  }
+
+  @Override
+  public void sendMessage(LCLOVEInfo info) {
+    TextComponentTranslation component = new TextComponentTranslation("lovecraft.exp_increased", info.increment, LOVE, totalEXP, EXP);
+    boolean send = false;
+    if (info.upgraded) {
+      if (LCConfig.showMessage >= 1) {
+        component.appendText(I18n.format("lovecraft.love_increased"));
+        send = true;
+      }
+      if (LCConfig.playSound >= 1) {
         player.getEntityWorld().playSound(player, player.getPosition(), LCSound.UPGRADE, SoundCategory.PLAYERS, 1F, 1F);
-      } else if (LCConfig.playSound >= 1) {
+      }
+    } else {
+      if (LCConfig.showMessage == 2) {
+        send = true;
+      }
+      if (LCConfig.playSound == 2) {
         player.getEntityWorld().playSound(player, player.getPosition(), LCSound.KILL, SoundCategory.PLAYERS, 1F, 1F);
       }
+    }
+    if (send) {
       if (LCConfig.messageType == 1) {
-        player.sendStatusMessage(new TextComponentTranslation("lovecraft.increased", LOVE, totalEXP, EXP), true);
+        player.sendStatusMessage(component, true);
       } else if (LCConfig.messageType == 2) {
-        player.sendMessage(new TextComponentTranslation("lovecraft.increased", LOVE, totalEXP, EXP));
+        player.sendMessage(component);
+      }
+    }
+  }
+
+  @Override
+  public void sendToClient(boolean silent) {
+    if (!player.getEntityWorld().isRemote) {
+      EntityPlayerMP mp = (EntityPlayerMP)player;
+      if (mp.getServer().getPlayerList().getPlayers().contains(mp)) {
+        LCNetwork.INSTANCE.sendTo(new LCMessage(totalEXP, silent), mp);
       }
     }
   }

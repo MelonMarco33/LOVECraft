@@ -9,5 +9,8 @@ public interface LCLOVE {
   public void addEXP(int value, boolean silent);
   public void setTotalEXP(int value, boolean silent);
   public void setLOVE(int value, boolean silent);
-  public void updateEXP(boolean silent);
+  public void updateAll(boolean silent);
+  public LCLOVEInfo updateEXP();
+  public void sendMessage(LCLOVEInfo info);
+  public void sendToClient(boolean silent);
 }
